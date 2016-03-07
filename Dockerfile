@@ -1,5 +1,6 @@
+# HEAVILY INFLUENCED BY https://github.com/tutumcloud/lamp
 FROM ubuntu:trusty
-MAINTAINER Fernando Mayo <fernando@tutum.co>, Feng Honglin <hfeng@tutum.co>
+MAINTAINER John Martin <john@sennep.com>
 
 # Install packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -12,7 +13,7 @@ ADD start-apache2.sh /start-apache2.sh
 ADD start-mysqld.sh /start-mysqld.sh
 ADD run.sh /run.sh
 RUN chmod 755 /*.sh
-ADD my.cnf /etc/mysql/conf.d/my.cnf
+ADD mysql.conf /etc/mysql/conf.d/my.cnf
 ADD supervisord-apache2.conf /etc/supervisor/conf.d/supervisord-apache2.conf
 ADD supervisord-mysqld.conf /etc/supervisor/conf.d/supervisord-mysqld.conf
 
@@ -23,20 +24,16 @@ RUN rm -rf /var/lib/mysql/*
 ADD create_mysql_admin_user.sh /create_mysql_admin_user.sh
 RUN chmod 755 /*.sh
 
-# config to enable .htaccess
-ADD apache_default /etc/apache2/sites-available/000-default.conf
+# Setup host + mod_rewrite
+ADD apache.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
-# Configure /app folder with sample app
-RUN git clone https://github.com/fermayo/hello-world-lamp.git /app
-RUN mkdir -p /app && rm -fr /var/www/html && ln -s /app /var/www/html
+# Environment variables to configure php
+ENV PHP_UPLOAD_MAX_FILESIZE 100M
+ENV PHP_POST_MAX_SIZE 100M
 
-#Environment variables to configure php
-ENV PHP_UPLOAD_MAX_FILESIZE 10M
-ENV PHP_POST_MAX_SIZE 10M
-
-# Add volumes for MySQL 
-VOLUME  ["/etc/mysql", "/var/lib/mysql" ]
+# Add volumes
+VOLUME "/var/www/"
 
 EXPOSE 80 3306
 CMD ["/run.sh"]

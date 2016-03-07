@@ -4,10 +4,10 @@
 
 RET=1
 while [[ RET -ne 0 ]]; do
-    echo "=> Waiting for confirmation of MySQL service startup"
-    sleep 5
-    mysql -uroot -e "status" > /dev/null 2>&1
-    RET=$?
+  echo "=> Waiting for confirmation of MySQL service startup"
+  sleep 5
+  mysql -uroot -e "status" > /dev/null 2>&1
+  RET=$?
 done
 
 PASS=${MYSQL_PASS:-$(pwgen -s 12 1)}
