@@ -32,9 +32,6 @@ RUN a2enmod rewrite
 ENV PHP_UPLOAD_MAX_FILESIZE 100M
 ENV PHP_POST_MAX_SIZE 100M
 
-# Add oh my zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-
 # Add volumes
 VOLUME "/var/www/"
 
